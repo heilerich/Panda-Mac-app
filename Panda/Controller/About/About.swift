@@ -19,28 +19,28 @@ class About: NSWindowController, NSTextFieldDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
 
-        self.window?.appearance = NSAppearance(named: NSAppearanceNameVibrantDark)
-        self.window?.titleVisibility = NSWindowTitleVisibility.Hidden;
+        self.window?.appearance = NSAppearance(named: NSAppearance.Name.vibrantDark)
+        self.window?.titleVisibility = NSWindow.TitleVisibility.hidden;
 
-        versionLabel.editable = false
-        if let version = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String {
+        versionLabel.isEditable = false
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             versionLabel.stringValue = "Version \(version)"
         }
 
         let html = "<a style =\"text-decoration: none; color:white;\" href=\"http://pablosproject.com/\">@PablosPoject</a>"
-        let developerString = attributedStringFromHTML(html)
-        developerLabel.selectable = true
+        let developerString = attributedStringFromHTML(HTML: html as NSString)
+        developerLabel.isSelectable = true
         developerLabel.allowsEditingTextAttributes = true
-        developerLabel.editable = false
+        developerLabel.isEditable = false
         developerLabel.attributedStringValue = developerString
         let size = developerLabel.sizeThatFits(NSSize(width: 10000, height: 1100));
         developerLabelWidth.constant = size.width
 
         let html_graphic = "<a style =\"text-decoration: none; color:white;\" href=\"http://www.beatricevivaldi.graphics/\">@BeatriceVivaldi</a>"
-        let graphicString = attributedStringFromHTML(html_graphic)
-        graphicLabel.selectable = true
+        let graphicString = attributedStringFromHTML(HTML: html_graphic as NSString)
+        graphicLabel.isSelectable = true
         graphicLabel.allowsEditingTextAttributes = true
-        graphicLabel.editable = false
+        graphicLabel.isEditable = false
         graphicLabel.attributedStringValue = graphicString
         let size_graphic = graphicLabel.sizeThatFits(NSSize(width: 10000, height: 1100));
         graphicLabelWidth.constant = size_graphic.width
@@ -50,10 +50,9 @@ class About: NSWindowController, NSTextFieldDelegate {
     func attributedStringFromHTML(HTML: NSString) -> NSAttributedString {
         let font = NSFont(name: "HelveticaNeue-Light", size: 24)
         let htmlString = "<span style=\"color: white; font-family:'\(font!.fontName)'; font-size:\(font!.pointSize)px;\">\(HTML)</span>"
-        let data = htmlString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-        let string = try? NSAttributedString(data: data!, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
-                                                               NSCharacterEncodingDocumentAttribute: NSUTF8StringEncoding],
-                documentAttributes: nil)
+        let data = htmlString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        let string = try? NSAttributedString(data: data!, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+
         return string!;
     }
 }

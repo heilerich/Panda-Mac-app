@@ -28,47 +28,52 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var aboutWindow:About?
     var darkTime:NSDate?
     var lightTime:NSDate?
-    var dateCheckTimer:NSTimer?
+    var dateCheckTimer:Timer?
 
-    
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
         Fabric.with([Crashlytics.self])
-
-        hourSwitchButton.state = NSOnState
+        hourSwitchButton.state = NSControl.StateValue.on
         
-        dateCheckTimer = NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: #selector(AppDelegate.checkTime), userInfo: nil, repeats: true)
+        dateCheckTimer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(AppDelegate.checkTime), userInfo: nil, repeats: true)
         
         //Update icon with current interface state
         updateIconForCurrentMode()
-        NSDistributedNotificationCenter.defaultCenter().addObserver(self, selector:#selector(AppDelegate.updateIconForCurrentMode), name: "AppleInterfaceThemeChangedNotification", object: nil)
+        DistributedNotificationCenter.default().addObserver(self, selector:#selector(AppDelegate.updateIconForCurrentMode), name: NSNotification.Name(rawValue: "AppleInterfaceThemeChangedNotification"), object: nil)
     }
+    
     override func awakeFromNib() {
-        let statusBar = NSStatusBar.systemStatusBar()
-        statusItem = statusBar.statusItemWithLength(-1)
+        let statusBar = NSStatusBar.system
+        statusItem = statusBar.statusItem(withLength: -1)
         
         statusButton = statusItem!.button!
         statusButton?.target = self;
-        statusButton?.action = #selector(AppDelegate.barButtonMenuPressed(_:))
-        statusButton?.sendActionOn(Int((NSEventMask.LeftMouseUpMask.union(NSEventMask.RightMouseUpMask)).rawValue))
+        statusButton?.action = #selector(AppDelegate.barButtonMenuPressed(sender:))
+        statusButton?.sendAction(on: NSEvent.EventTypeMask(rawValue: NSEvent.EventTypeMask.RawValue(Int((NSEvent.EventTypeMask.leftMouseUp.union(NSEvent.EventTypeMask.rightMouseUp)).rawValue))))
         
         appMenu.delegate = self
     }
 
     func currentInterfaceState () -> currentInterface{
-        let interfaceValue:CFString = "AppleInterfaceStyle" as CFString
-        let property:CFPropertyList? = CFPreferencesCopyValue(interfaceValue, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost)
-        
-        if let light:CFPropertyList = property{
-            if light as! NSString == "Light"{
-                return currentInterface.light
-            }
-            else{
-                return currentInterface.dark
+        let scriptSource = """
+                            tell application "System Events"
+                            tell appearance preferences
+                            get dark mode
+                            end tell
+                            end tell
+                            """
+        var scriptError: NSDictionary?
+        if let scriptObj = NSAppleScript(source: scriptSource) {
+            let output = scriptObj.executeAndReturnError(&scriptError)
+            if(output.booleanValue) {
+                return currentInterface.dark;
+            } else {
+                return currentInterface.light;
             }
         }
-        else{
-            return currentInterface.light
+        if let error = scriptError {
+            NSLog("Error in AppleScript execution: %@", error)
         }
+        return currentInterface.light;
     }
     
     func activateDevMode(sender: AnyObject) {
@@ -82,85 +87,104 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
   
-   func updateIconForCurrentMode() {
+    @objc func updateIconForCurrentMode() {
         let currentInterfaceLight:currentInterface = currentInterfaceState()
         
         switch currentInterfaceLight{
         case .light:
-            statusButton?.image = NSImage(named: "panda-white")
+            statusButton?.image = NSImage(named: NSImage.Name(rawValue: "panda-white"))
         case .dark:
-            statusButton?.image = NSImage(named: "panda-dark")
+            statusButton?.image = NSImage(named: NSImage.Name(rawValue: "panda-dark"))
         }
     }
     
     func activateLightInterface(){
         print("Switch to Light")
-        PAThemeUtility.switchToLightMode()
+        let scriptSource = """
+                            tell application "System Events"
+                            tell appearance preferences
+                            set dark mode to false
+                            end tell
+                            end tell
+                            """
+        var scriptError: NSDictionary?
+        if let scriptObj = NSAppleScript(source: scriptSource) {
+            scriptObj.executeAndReturnError(&scriptError)
+        }
+        if let error = scriptError {
+            NSLog("Error in AppleScript execution: %@", error)
+        }
+
     }
     
     func activateDarkInterface(){
         print("Switch to Darks")
-        PAThemeUtility.switchToDarkMode()
+        let scriptSource = """
+                            tell application "System Events"
+                            tell appearance preferences
+                            set dark mode to true
+                            end tell
+                            end tell
+                            """
+        var scriptError: NSDictionary?
+        if let scriptObj = NSAppleScript(source: scriptSource) {
+            scriptObj.executeAndReturnError(&scriptError)
+        }
+        if let error = scriptError {
+            NSLog("Error in AppleScript execution: %@", error)
+        }
     }
     
-    func resetInterfaceSettings() {
-        PAThemeUtility.resetSettings()
-    }
-    
-    func barButtonMenuPressed(sender: NSStatusBarButton!){
+    @objc func barButtonMenuPressed(sender: NSStatusBarButton!){
         let event:NSEvent! = NSApp.currentEvent!
         print (event.description)
-        if (event.type == NSEventType.RightMouseUp) {
+        if (event.type == NSEvent.EventType.rightMouseUp) {
             statusItem?.menu = appMenu
-            statusItem?.popUpStatusItemMenu(appMenu) //Force the menu to be shown, otherwise it'll not
+            statusItem?.popUpMenu(appMenu) //Force the menu to be shown, otherwise it'll not
         }
         else{
-            activateDevMode(sender)
-            hourSwitchButton.state = NSOffState;
+            activateDevMode(sender: sender)
+            hourSwitchButton.state = NSControl.StateValue.off;
         }
     }
     
   //MARK: - NSMenuDelegate
-    func menuDidClose(menu: NSMenu) {
+    func menuDidClose(_ menu: NSMenu) {
         statusItem?.menu = nil
     }
     
   //MARK: -Action management
     @IBAction func preferencesPressed(sender: AnyObject) {
-        preferenceWindow = NSPreferencePanelWindowController(windowNibName: "NSPreferencePanelWindowController")
+        preferenceWindow = NSPreferencePanelWindowController(windowNibName: NSNib.Name(rawValue: "NSPreferencePanelWindowController"))
         let window:NSWindow! = preferenceWindow?.window!
         window.makeKeyAndOrderFront(self)
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     @IBAction func aboutPressed(sender: AnyObject) {
-        aboutWindow = About(windowNibName: "About")
+        aboutWindow = About(windowNibName: NSNib.Name(rawValue: "About"))
         let window:NSWindow! = aboutWindow?.window!
         window.makeKeyAndOrderFront(self)
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     @IBAction func hourSwitchPressed(sender: AnyObject) {
-        let newState = hourSwitchButton.state == NSOnState ? NSOffState : NSOnState
+        let newState = hourSwitchButton.state == NSControl.StateValue.on ? NSControl.StateValue.off : NSControl.StateValue.on
         hourSwitchButton.state = newState
     }
     
-    @IBAction func resetDarkPressed(sender: AnyObject) {
-        self.resetInterfaceSettings()
-    }
-    
     //MARK: - Check timer
-    func checkTime(){
+    @objc func checkTime(){
         let now = NSDate()
         
         //Tira su le date dai default di sistema
-        darkTime =  NSUserDefaults.standardUserDefaults().valueForKey("DarkTime") as? NSDate
-        lightTime =  NSUserDefaults.standardUserDefaults().valueForKey("LightTime") as? NSDate
+        darkTime =  UserDefaults.standard.value(forKey: "DarkTime") as? NSDate
+        lightTime =  UserDefaults.standard.value(forKey: "LightTime") as? NSDate
         
-        let interfaceStateForTime = interfaceStateForCurrentTime(translateDateToday(darkTime), lightDate: translateDateToday(lightTime), now: now)
+        let interfaceStateForTime = interfaceStateForCurrentTime(darkDate: translateDateToday(date: darkTime), lightDate: translateDateToday(date: lightTime), now: now)
         let currentInterface = currentInterfaceState()
         
-        if (interfaceStateForTime != currentInterface) && (hourSwitchButton.state == NSOnState){
+        if (interfaceStateForTime != currentInterface) && (hourSwitchButton.state == NSControl.StateValue.on){
             switch interfaceStateForTime{
             case .light:
                 activateLightInterface()
@@ -172,20 +196,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     func translateDateToday(date:NSDate?) -> (NSDate?){
         if let date = date{
-            let calendar = NSCalendar.currentCalendar()
-            let calendarflag: NSCalendarUnit = ([NSCalendarUnit.Day, NSCalendarUnit.Month, NSCalendarUnit.Year])
-            let hourFlag: NSCalendarUnit = ([NSCalendarUnit.Hour, NSCalendarUnit.Minute, NSCalendarUnit.Second])
-            let now = NSDate()
-            let componentsCalendar = calendar.components(calendarflag, fromDate: now)
-            let componentsHour = calendar.components(hourFlag, fromDate: date)
+            let calendar = Calendar.current
+            let calendarflag: Set<Calendar.Component> = [Calendar.Component.day, Calendar.Component.month, Calendar.Component.year]
+            let hourFlag: Set<Calendar.Component> = [Calendar.Component.hour, Calendar.Component.minute, Calendar.Component.second]
+            let now = Date()
             
-            var finalComponents = NSDateComponents()
+            let componentsCalendar = calendar.dateComponents(calendarflag, from: now)
+            let componentsHour = calendar.dateComponents(hourFlag, from: date as Date)
+            
+            var finalComponents = DateComponents()
             finalComponents = componentsCalendar
             finalComponents.hour = componentsHour.hour
             finalComponents.minute = componentsHour.minute
             finalComponents.second = componentsHour.second
             
-            return calendar.dateFromComponents(finalComponents)
+            return calendar.date(from: finalComponents) as NSDate?
         }
         else{
             return nil
@@ -197,36 +222,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return currentInterfaceState()
         }
         else if darkTime == nil{
-            return lightDate!.compare(now) == NSComparisonResult.OrderedAscending ? currentInterface.light : currentInterface.dark
+            return lightDate!.compare(now as Date as Date) == ComparisonResult.orderedAscending ? currentInterface.light : currentInterface.dark
         }
         else if lightDate == nil{
-            _ = darkDate!.compare(now)
-            return darkDate!.compare(now) == NSComparisonResult.OrderedAscending ? currentInterface.dark : currentInterface.light
+            _ = darkDate!.compare(now as Date)
+            return darkDate!.compare(now as Date) == ComparisonResult.orderedAscending ? currentInterface.dark : currentInterface.light
         }
         else{
-            let comparison = lightDate!.compare(darkDate!)
-            if comparison == NSComparisonResult.OrderedDescending{ //Dark<Light
-                let darkComparison = darkDate!.compare(now)
-                let lightComparison = lightDate!.compare(now)
+            let comparison = lightDate!.compare(darkDate! as Date)
+            if comparison == ComparisonResult.orderedDescending{ //Dark<Light
+                let darkComparison = darkDate!.compare(now as Date)
+                let lightComparison = lightDate!.compare(now as Date)
                 
                 //Now > Light || Now < Dark     ->light
-                if darkComparison == NSComparisonResult.OrderedDescending || lightComparison == NSComparisonResult.OrderedAscending{
+                if darkComparison == ComparisonResult.orderedDescending || lightComparison == ComparisonResult.orderedAscending{
                     return currentInterface.light
                 }
                 //Now < Light && Now > Dark     ->dark
-                if darkComparison == NSComparisonResult.OrderedAscending && lightComparison == NSComparisonResult.OrderedDescending{
+                if darkComparison == ComparisonResult.orderedAscending && lightComparison == ComparisonResult.orderedDescending{
                     return currentInterface.dark
                 }
             }
             else{ //Dark>Light
-                let darkComparison = darkDate!.compare(now)
-                let lightComparison = lightDate!.compare(now)
+                let darkComparison = darkDate!.compare(now as Date)
+                let lightComparison = lightDate!.compare(now as Date)
                 //Now > Dark || Now < Light     ->dark
-                if darkComparison == NSComparisonResult.OrderedAscending || lightComparison == NSComparisonResult.OrderedDescending{
+                if darkComparison == ComparisonResult.orderedAscending || lightComparison == ComparisonResult.orderedDescending{
                     return currentInterface.dark
                 }
                 //Now < Dark && Now > Light     ->light
-                if darkComparison == NSComparisonResult.OrderedDescending && lightComparison == NSComparisonResult.OrderedAscending{
+                if darkComparison == ComparisonResult.orderedDescending && lightComparison == ComparisonResult.orderedAscending{
                     return currentInterface.light
                 }
             }

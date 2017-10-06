@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -16,31 +17,25 @@
                 <menuItem title="About" id="jRU-Ao-6Ff">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="aboutPressed:" target="Voe-Tx-rLC" id="yTf-TH-3jG"/>
+                        <action selector="aboutPressedWithSender:" target="Voe-Tx-rLC" id="cM9-Bt-JeU"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Auto switch theme" id="AJ1-bx-NcJ">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="hourSwitchPressed:" target="Voe-Tx-rLC" id="a42-ap-9Ae"/>
+                        <action selector="hourSwitchPressedWithSender:" target="Voe-Tx-rLC" id="4WP-Q4-ygP"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Preferences" id="HaN-8H-iVx">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="preferencesPressed:" target="Voe-Tx-rLC" id="Fsh-GO-jqI"/>
+                        <action selector="preferencesPressedWithSender:" target="Voe-Tx-rLC" id="iHY-yE-Mrj"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Check for updates" id="FOH-Dk-llX">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="checkForUpdates:" target="9OZ-Dw-P5Q" id="ExR-8s-Fwc"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Reset Dark Mode Settings" id="xKF-cZ-cuo">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="resetDarkPressed:" target="Voe-Tx-rLC" id="tjs-yO-qvy"/>
+                        <action selector="checkForUpdates:" target="9OZ-Dw-P5Q" id="3lJ-gC-BXJ"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Quit" id="bOH-1S-Gqz">

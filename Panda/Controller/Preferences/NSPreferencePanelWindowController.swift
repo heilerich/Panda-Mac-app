@@ -19,25 +19,25 @@ class NSPreferencePanelWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         
-        self.window?.appearance = NSAppearance(named: NSAppearanceNameVibrantDark)
-        self.window?.titleVisibility = NSWindowTitleVisibility.Hidden;
+        self.window?.appearance = NSAppearance(named: NSAppearance.Name.vibrantDark)
+        self.window?.titleVisibility = NSWindow.TitleVisibility.hidden;
 
         //Set login item state
-        launchAtStartupButton.state = PALoginItemUtility.isCurrentApplicatonInLoginItems() ? NSOnState : NSOffState
+        launchAtStartupButton.state = PALoginItemUtility.isCurrentApplicatonInLoginItems() ? NSControl.StateValue.on : NSControl.StateValue.off
         
         //Set darkDate
-        if let darkDate = NSUserDefaults.standardUserDefaults().objectForKey("DarkTime") as? NSDate {
-            darkModeDatePicker.dateValue = darkDate
+        if let darkDate = UserDefaults.standard.object(forKey: "DarkTime") as? NSDate {
+            darkModeDatePicker.dateValue = darkDate as Date
         }
         
         //Set light date
-        if let lightDate = NSUserDefaults.standardUserDefaults().objectForKey("LightTime") as? NSDate{
-            lightModeDatePicker.dateValue = lightDate
+        if let lightDate = UserDefaults.standard.object(forKey: "LightTime") as? NSDate{
+            lightModeDatePicker.dateValue = lightDate as Date
         }
     }
     
     @IBAction func launchLoginPressed(sender: NSButton) {
-        if sender.state == NSOnState{
+        if sender.state == NSControl.StateValue.on{
             PALoginItemUtility.addCurrentApplicatonToLoginItems()
         }
         else{
@@ -46,18 +46,18 @@ class NSPreferencePanelWindowController: NSWindowController {
     }
     
     @IBAction func darkTimeChange(sender: NSDatePicker) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-        appDelegate.darkTime = sender.dateValue
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        appDelegate.darkTime = sender.dateValue as NSDate
+        let userDefaults = UserDefaults.standard
         userDefaults.setValue(sender.dateValue, forKey: "DarkTime")
         userDefaults.synchronize()
     }
     
     @IBAction func lightTimeChange(sender: NSDatePicker) {
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-        appDelegate.lightTime = sender.dateValue
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        NSUserDefaults.standardUserDefaults().setValue(sender.dateValue, forKey: "LightTime")
+        let appDelegate = NSApplication.shared.delegate as! AppDelegate
+        appDelegate.lightTime = sender.dateValue as NSDate
+        let userDefaults = UserDefaults.standard
+        UserDefaults.standard.setValue(sender.dateValue, forKey: "LightTime")
         userDefaults.synchronize()
     }
     

@@ -13,7 +13,6 @@
 		48CBD1481ACD426600CF5DCE /* NSPreferencePanelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CBD1441ACD426600CF5DCE /* NSPreferencePanelWindowController.swift */; };
 		48CBD1491ACD426600CF5DCE /* NSPreferencePanelWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48CBD1451ACD426600CF5DCE /* NSPreferencePanelWindowController.xib */; };
 		48CBD1501ACD42B200CF5DCE /* PALoginItemUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CBD14C1ACD42B200CF5DCE /* PALoginItemUtility.m */; };
-		48CBD1511ACD42B200CF5DCE /* PAThemeUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CBD14F1ACD42B200CF5DCE /* PAThemeUtility.m */; };
 		528EBFCC1D5CCB83006E1E73 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 528EBFCB1D5CCB83006E1E73 /* dsa_pub.pem */; };
 		52C6F7111D53AFD00011B144 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C6F70F1D53AFD00011B144 /* Fabric.framework */; };
 		52C6F7121D53AFD00011B144 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C6F7101D53AFD00011B144 /* Crashlytics.framework */; };
@@ -46,8 +45,6 @@
 		48CBD1451ACD426600CF5DCE /* NSPreferencePanelWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NSPreferencePanelWindowController.xib; sourceTree = "<group>"; };
 		48CBD14B1ACD42B200CF5DCE /* PALoginItemUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PALoginItemUtility.h; sourceTree = "<group>"; };
 		48CBD14C1ACD42B200CF5DCE /* PALoginItemUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PALoginItemUtility.m; sourceTree = "<group>"; };
-		48CBD14E1ACD42B200CF5DCE /* PAThemeUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAThemeUtility.h; sourceTree = "<group>"; };
-		48CBD14F1ACD42B200CF5DCE /* PAThemeUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAThemeUtility.m; sourceTree = "<group>"; };
 		528EBFCB1D5CCB83006E1E73 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		52C6F70F1D53AFD00011B144 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
 		52C6F7101D53AFD00011B144 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = SOURCE_ROOT; };
@@ -129,16 +126,6 @@
 			path = "Panda/Library/Login Item Utility";
 			sourceTree = SOURCE_ROOT;
 		};
-		48CBD14D1ACD42B200CF5DCE /* Theme Utility */ = {
-			isa = PBXGroup;
-			children = (
-				48CBD14E1ACD42B200CF5DCE /* PAThemeUtility.h */,
-				48CBD14F1ACD42B200CF5DCE /* PAThemeUtility.m */,
-			);
-			name = "Theme Utility";
-			path = "Panda/Library/Theme Utility";
-			sourceTree = SOURCE_ROOT;
-		};
 		FE9EE20B66A1684CF371B660 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,7 +182,6 @@
 			isa = PBXGroup;
 			children = (
 				48CBD14A1ACD42B200CF5DCE /* Login Item Utility */,
-				48CBD14D1ACD42B200CF5DCE /* Theme Utility */,
 			);
 			name = Library;
 			path = ../Panda/Library;
@@ -231,7 +217,7 @@
 			attributes = {
 				LastSwiftMigration = 0730;
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Paolo Tagliani";
 				TargetAttributes = {
 					48C7CED919F98EE8006B8EC0 = {
@@ -298,7 +284,6 @@
 				48CBD1501ACD42B200CF5DCE /* PALoginItemUtility.m in Sources */,
 				48CBD1461ACD426600CF5DCE /* About.swift in Sources */,
 				48CBD1481ACD426600CF5DCE /* NSPreferencePanelWindowController.swift in Sources */,
-				48CBD1511ACD42B200CF5DCE /* PAThemeUtility.m in Sources */,
 				FE9EE94160D7254530FC9E6F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,14 +310,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -372,14 +363,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -426,7 +423,7 @@
 				PRODUCT_NAME = Panda;
 				SWIFT_OBJC_BRIDGING_HEADER = "Panda/Application/Panda-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -450,7 +447,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pablosproject.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Panda;
 				SWIFT_OBJC_BRIDGING_HEADER = "Panda/Application/Panda-Bridging-Header.h";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
